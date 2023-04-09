@@ -1,3 +1,4 @@
+from operator import ne
 import re,math
 
 def linear_quation(eq):
@@ -115,7 +116,7 @@ def remove_x_quadratic(n,m):
 
 def find_digit(n): #Find and return the sum of constant present 
     n = n.split('=')
-    rom = re.compile(r'[x]?[+-\^]?[\d]+[x]?')
+    rom = re.compile(r'[+-\^]?[\d]+[x]?')
     cc = 0
     for i in rom.findall(n[0]):
         for j in i:
@@ -126,8 +127,8 @@ def find_digit(n): #Find and return the sum of constant present
             if j=='^':
                 cc = 1
 
-    lhs = [int(i) for i in rom.findall(n[0]) if 'x' not in i]
-    rhs = [int(i) for i in rom.findall(n[1]) if 'x' not in i]
+    lhs = [int(i) for i in rom.findall(n[0]) if 'x' not in i and '^2' not in i]
+    rhs = [int(i) for i in rom.findall(n[1]) if 'x' not in i and '^2' not in i]
     lhs_sum = sum(lhs)
     rhs_sum = sum(rhs)
     if cc==0:
