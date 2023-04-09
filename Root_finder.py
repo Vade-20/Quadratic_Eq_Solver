@@ -1,4 +1,3 @@
-
 import re,math
 
 def linear_quation(eq):
