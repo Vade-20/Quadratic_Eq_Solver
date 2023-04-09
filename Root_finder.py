@@ -1,4 +1,3 @@
-from operator import ne
 import re,math
 
 def linear_quation(eq):
