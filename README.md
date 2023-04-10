@@ -1,6 +1,7 @@
 # Quadratic_Eq_Solver
-This python scrip solve the quadratic equation and linear equation and return the roots of the equation
+This python scrip solve the quadratic equation and linear equation in one variable and return the roots of the equation.
 =======
 #### Note 
-Please enter the equation in string form 
-and use ^ for expressing power instead of using **
+* Please enter the equation in string form 
+* The equation is in one variable
+* Use ^ for expressing power instead of using **

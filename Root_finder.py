@@ -32,16 +32,20 @@ def quadratic_equation(eq):
     one_var_rhs = [i for i in rom.findall(var[1]) if '^' not in i]
     b = remove_x_linear(one_var_lhs,one_var_rhs)
     a = remove_x_quadratic(tw0_var_lhs,tw0_var_rhs)
-    D = check_roots(a,b,c)
-    if str(D).isdigit() and D!=0:
-        root_1 = simplest_fraction(f'{-b-D}/{2*a}')
-        root_2 = simplest_fraction(f'{-b+D}/{2*a}')
-    elif D==0:
-        root_1 = root_2 = simplest_fraction(f'{-b}/{2*a}')
+    if a !=0 :
+        D = check_roots(a,b,c)
+        if str(D).isdigit() and D!=0:
+            root_1 = simplest_fraction(f'{-b-D}/{2*a}')
+            root_2 = simplest_fraction(f'{-b+D}/{2*a}')
+        elif D==0:
+            root_1 = root_2 = simplest_fraction(f'{-b}/{2*a}')
+        else:
+            root_1 = f'({-b}-{D})/{2*a}'
+            root_2 = f'({-b}+{D})/{2*a}'
+        print(f"The roots are: {root_1},{root_2}")
     else:
-        root_1 = f'({-b}-{D})/{2*a}'
-        root_2 = f'({-b}+{D})/{2*a}'
-    print(f"The roots are: {root_1},{root_2}")
+        print('The root is ',simplest_fraction(f'{-c}/{b}'))
+    
 
 def is_perfect_square(n):
     sq = math.sqrt(n)
@@ -121,10 +125,13 @@ def find_digit(n): #Find and return the sum of constant present
         for j in i:
             if j=='^':
                 cc = 1
-    for i in rom.findall(n[1]):
-        for j in i:
-            if j=='^':
-                cc = 1
+                break
+    else:
+        for i in rom.findall(n[1]):
+            for j in i:
+                if j=='^':
+                    cc = 1
+                    break
 
     lhs = [int(i) for i in rom.findall(n[0]) if 'x' not in i and '^2' not in i]
     rhs = [int(i) for i in rom.findall(n[1]) if 'x' not in i and '^2' not in i]
@@ -146,6 +153,11 @@ def simplest_fraction(n):
                 n[1] = int(n[1]/i)
             else:
                 ch = 1
+    if n[0]<0 and n[1]<0:
+        n[0] = abs(n[0])
+        n[1] = abs(n[1])
+    if n[0]==0:
+        return 0 
     if n[1]==1:
         return n[0]
     else:
