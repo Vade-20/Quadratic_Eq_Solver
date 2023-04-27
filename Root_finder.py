@@ -6,17 +6,30 @@ def linear_quation(eq):
     var = find_variable(eq)
     digit = find_digit(var)
     var = var.split('=')
-    rom = re.compile(r'''[+-\^]?[\d]*[x]''',re.VERBOSE) 
-    lhs = rom.findall(var[0])
-    rhs = rom.findall(var[1])
-    x_value = remove_x_linear(lhs,rhs)
-    if str(digit)[0]=='-' and str(x_value)[0]=='-':
-        fraction = f'{str(digit)[1:]}/{str(x_value)[1:]}'
-    elif str(x_value)[0]=='-':
-        fraction = f'-{str(digit)}/{str(x_value)[1:]}'
+    rom = re.compile(r'''([-]?[\d]*)([x])''') 
+    lhs = 0
+    rhs = 0
+    for i in rom.findall(var[0]):
+        if i[0]!='':
+            lhs += int(i[0])
+        else:
+            lhs += 1
+    for i in rom.findall(var[1]):
+        if i[0] !='':
+            rhs += int(i[0])
+        else:
+            rhs += 1
+    x_value = lhs-rhs
+    if x_value != 0:
+        if str(digit)[0]=='-' and str(x_value)[0]=='-':
+            fraction = f'{str(digit)[1:]}/{str(x_value)[1:]}'
+        elif str(x_value)[0]=='-':
+            fraction = f'-{str(digit)}/{str(x_value)[1:]}'
+        else:
+            fraction = f'{digit}/{x_value}'
+        print('The root is :',simplest_fraction(fraction))
     else:
-        fraction = f'{digit}/{x_value}'
-    print('The root is :',simplest_fraction(fraction))
+        print("We can't find the root for this equation")
 
 
 def quadratic_equation(eq):
@@ -118,29 +131,15 @@ def remove_x_quadratic(n,m):
 
 
 def find_digit(n): #Find and return the sum of constant present 
-    n = n.split('=')
-    rom = re.compile(r'[+-\^]?[\d]+[x]?')
-    cc = 0
-    for i in rom.findall(n[0]):
-        for j in i:
-            if j=='^':
-                cc = 1
-                break
+    n1 = n.split('=')
+    rom = re.compile(r'\b([-^]?[\d]+)(?!x)\b')
+    lhs = sum([int(i) for i in rom.findall(n1[0]) if i!='^2'])
+    rhs = sum([int(i) for i in rom.findall(n1[1]) if i!='^2'])
+    data = re.search(r'[\^][2]',n)
+    if data is None:
+        return rhs-lhs
     else:
-        for i in rom.findall(n[1]):
-            for j in i:
-                if j=='^':
-                    cc = 1
-                    break
-
-    lhs = [int(i) for i in rom.findall(n[0]) if 'x' not in i and '^2' not in i]
-    rhs = [int(i) for i in rom.findall(n[1]) if 'x' not in i and '^2' not in i]
-    lhs_sum = sum(lhs)
-    rhs_sum = sum(rhs)
-    if cc==0:
-        return rhs_sum-lhs_sum
-    else:
-        return lhs_sum-rhs_sum
+        return lhs-rhs
 
 
 def simplest_fraction(n):
