@@ -6,20 +6,7 @@ def linear_quation(eq):
     var = find_variable(eq)
     digit = find_digit(var)
     var = var.split('=')
-    rom = re.compile(r'''([-]?[\d]*)([x])''') 
-    lhs = 0
-    rhs = 0
-    for i in rom.findall(var[0]):
-        if i[0]!='':
-            lhs += int(i[0])
-        else:
-            lhs += 1
-    for i in rom.findall(var[1]):
-        if i[0] !='':
-            rhs += int(i[0])
-        else:
-            rhs += 1
-    x_value = lhs-rhs
+    x_value = remove_x_linear(var[0],var[1])
     if x_value != 0:
         if str(digit)[0]=='-' and str(x_value)[0]=='-':
             fraction = f'{str(digit)[1:]}/{str(x_value)[1:]}'
@@ -38,35 +25,149 @@ def quadratic_equation(eq):
     var = find_variable(eq)
     c = find_digit(var)
     var = var.split('=')
-    rom = re.compile(r'''[+-\^]?[\d]*[x][\^]?[2]?''',re.VERBOSE) 
-    tw0_var_lhs = [i for i in rom.findall(var[0]) if '^'  in i]
-    tw0_var_rhs = [i for i in rom.findall(var[1]) if '^'  in i]
-    one_var_lhs = [i for i in rom.findall(var[0]) if '^' not in i]
-    one_var_rhs = [i for i in rom.findall(var[1]) if '^' not in i]
-    b = remove_x_linear(one_var_lhs,one_var_rhs)
-    a = remove_x_quadratic(tw0_var_lhs,tw0_var_rhs)
+    rom = re.compile(r'''[-]?[\d]*[x][\^]?[2]?''',re.VERBOSE) 
+    b = remove_x_linear(var[0],var[1])
+    a = remove_x_quadratic(var[0],var[1])
     if a !=0 :
         D = check_roots(a,b,c)
-        if str(D).isdigit() and D!=0:
-            root_1 = simplest_fraction(f'{-b-D}/{2*a}')
-            root_2 = simplest_fraction(f'{-b+D}/{2*a}')
-        elif D==0:
+        if 'i' not in D and '√' not in D and D!='0':
+            root_1 = simplest_fraction(f'{-b-int(D)}/{2*a}')
+            root_2 = simplest_fraction(f'{-b+int(D)}/{2*a}')
+        elif 'i' not in D and D !='0':
+            root_1 = simple_fraction_with_roots(b,D,a,'+')
+            root_2 = simple_fraction_with_roots(b,D,a,'-')
+        elif D=='0':
             root_1 = root_2 = simplest_fraction(f'{-b}/{2*a}')
-        else:
-            root_1 = f'({-b}-{D})/{2*a}'
-            root_2 = f'({-b}+{D})/{2*a}'
-        print(f"The roots are: {root_1},{root_2}")
+        elif '√' in D and 'i' in D:
+            root_1 = simple_fraction_with_roots(b,D,a,'+')
+            root_2 = simple_fraction_with_roots(b,D,a,'-')
+        elif '√' not in D and 'i' in D:
+            root_1 = simple_fraction_with_roots_2(b,D,a,'+')
+            root_2 = simple_fraction_with_roots_2(b,D,a,'-')
+        print("The roots are-",root_1,root_2)
     else:
         print('The root is ',simplest_fraction(f'{-c}/{b}'))
     
 
 def is_perfect_square(n):
-    sq = math.sqrt(n)
-    if int(sq+0.5)**2==n:
+    sq = math.sqrt(abs(n))
+    if int(sq+0.5)**2==abs(n):
         return True
     else:
-        return False
+        ans=1
+        for i in range(2,int(abs(n)/2)+2):
+            ch = 0
+            while ch==0:
+                if n%(i**2)==0:
+                    ans = ans*i
+                    n = int(n/(i**2))
+                else:
+                    ch = 1
+        if ans!=1:
+            if n>0:
+                return f'{ans}√{n}'
+            else:
+                return f'{ans}√{abs(n)}i'
+        else:
+            if n>0:
+                return f'{ans}√{n}'
+            else:
+                return f'√{abs(n)}i'
 
+
+def simple_fraction_with_roots(b,d,a,sign):
+    a = a*2
+    a1 = a
+    prime = []
+    if 'i' in d:
+        d1 = str(d)[:len(str(d))-1]
+        d1 = d1.split('√')
+    else:
+        d1 = d.split('√')
+    if d1[0]!='':
+        d1[0]=int(d1[0])
+        for i in range(2,int(abs(a1/2)+2)):
+            ch = 0
+            while ch==0:
+                if a1%i==0:
+                    prime.append(i)
+                    a1 = int(a1/i)
+                else:
+                    ch = 1
+        for i in prime:
+            if b!=0:
+                if b%i==0 and d1[0]%i==0:
+                    b = int(b/i)
+                    d1[0] = int(d1[0]/i)
+                    a = int(a/i)
+            else:
+                for i in prime:
+                    if d1[0]%i==0:
+                        d1[0] = int(d1[0]/i)
+                        a = int(a/i) 
+    if d1[0]==1:
+        d1[0]=''
+    
+    if b!=0:
+        if "i" in d:
+            if a!=1:
+                return f'{-b}{sign}{d1[0]}√{d1[1]}i/{a}'
+            else:
+                return f'{-b}{sign}{d1[0]}√{d1[1]}i'
+        else:
+            if a!=1:
+                return f'{-b}{sign}{d1[0]}√{d1[1]}/{a}'
+            else:
+                return f'{-b}{sign}{d1[0]}√{d1[1]}'                         
+    else:  
+        if "i" in d:
+            if a!=1:
+                return f'{sign}{d1[0]}√{d1[1]}i/{a}'
+            else:
+                return f'{sign}{d1[0]}√{d1[1]}i'
+        else:
+            if a!=1:
+                return f'{sign}{d1[0]}√{d1[1]}/{a}'
+            else:
+                return f'{sign}{d1[0]}√{d1[1]}'
+
+
+def simple_fraction_with_roots_2(b,d,a,sign):
+    a = a*2
+    a1 = a
+    prime = []
+    d1 = int(d[len(d)-2])
+    for i in range(2,int(abs(a1/2)+2)):
+        ch = 0
+        while ch==0:
+            if a1%i==0:
+                prime.append(i)
+                a1 = int(a1/i)
+            else:
+                ch = 1
+    for i in prime:
+        if b!=0:
+            if b%i==0 and d1%i==0:
+                b = int(b/i)
+                d1= int(d1/i)
+                a = int(a/i)
+        else:
+            for i in prime:
+                if d1%(i**2)==0:
+                    d1 = int(d1/i)
+                    a = int(a/i) 
+    if d1==1:
+        d1 = ''
+    if b!=0:
+        if a!=1:
+            return f'{-b}{sign}{d1}i/{a}'                        
+        else:
+            return f'{-b}{sign}{d1}i'                        
+    else:  
+        if a==1:
+            return f'{sign}{d}i'
+        else:
+            return f'{sign}{d}/{a}'                    
 
 
 def find_variable(n):
@@ -75,14 +176,12 @@ def find_variable(n):
         if str(i).isalpha():
             d.add(i)
     d = list(d)
-
     for i in range(len(n)):
         if i != len(n)-1:
             if n[i]+n[i+1]==d[0]+d[0]:
                 raise Exception('Please enter the proper fomat of equation')
-            elif n[i]=='x' and n[i+1] not in ['+','-','=','(',')','^']:
-                raise Exception('Please enter the proper format of  equation')
-            
+            elif n[i]=='x' and n[i+1] not in ['+','-','=','(',')','^',' ']:
+                raise Exception('Please enter the proper format of  equation')   
     if len(d)>1:
         raise Exception("Please enter a equation in one variable")
     elif len(d)==1:
@@ -91,43 +190,45 @@ def find_variable(n):
         return eval(n)
 
 def remove_x_linear(n,m):
-    lhs = []
-    for i in n:
-        try:
-            lhs.append(int(i[:len(i)-1]))
-        except ValueError:
-            lhs.append(1)
-            continue
-    rhs = []
-    for i in m:
-        try:
-            rhs.append(int(i[:len(i)-1]))
-        except ValueError:
-            rhs.append(1)
-            continue
-    lhs_sum = sum(lhs)
-    rhs_sum = sum(rhs)
-    return lhs_sum-rhs_sum
+    rom = re.compile(r'''([-]?[\d]*)([x])(?![\^][2])''') 
+    lhs = 0
+    rhs = 0
+    for i in rom.findall(n):
+        if i[0]!=''and i[0]!='-':
+            lhs += int(i[0])
+        elif i[0]=='-':
+            lhs +=-1
+        else:
+            lhs += 1
+    for i in rom.findall(m):
+        if i[0] !='' and i[0]!='-':
+            rhs += int(i[0])
+        elif i[0]=='-':
+            rhs +=-1    
+        else:
+            rhs += 1
+    return lhs-rhs
 
 
 def remove_x_quadratic(n,m):
-    lhs = []
-    for i in n:
-        try:
-            lhs.append(int(i[:len(i)-3]))
-        except ValueError:
-            lhs.append(1)
-            continue
-    rhs = []
-    for i in m:
-        try:
-            rhs.append(int(i[:len(i)-3]))
-        except ValueError:
-            rhs.append(1)
-            continue
-    lhs_sum = sum(lhs)
-    rhs_sum = sum(rhs)
-    return lhs_sum-rhs_sum
+    rom = re.compile(r'''([-]?[\d]*)([x][\^][2])''') 
+    lhs = 0
+    rhs = 0
+    for i in rom.findall(n):
+        if i[0]!='' and i[0]!='-':
+            lhs += int(i[0])
+        elif i[0]=='-':
+            lhs += -1
+        else:
+            lhs += 1
+    for i in rom.findall(m):
+        if i[0] !='' and i[0]!='-':
+            rhs += int(i[0])
+        elif i[0]=='-':
+            rhs += -1
+        else:
+            rhs += 1
+    return lhs-rhs
 
 
 def find_digit(n): #Find and return the sum of constant present 
@@ -166,31 +267,63 @@ def simplest_fraction(n):
 def check_roots(a,b,c):
     D = (b**2) - (4*a*c)
     if D>0:
-        if is_perfect_square(D):
-            return int(math.sqrt(D))
+        if is_perfect_square(D) is True:
+            return str(int(math.sqrt(D)))
         else:
-            return f'√{D}'
+            return f'{is_perfect_square(D)}'
     elif D==0:
-        return 0
+        return '0'
     elif D<0:
         pov = abs(D)
-        if is_perfect_square(pov):
+        if is_perfect_square(pov) is True:
             D = str(int(math.sqrt(pov)))+'i'
             return D
         else:
-            return f'√{pov}i'
+            return f'{is_perfect_square(D)}'
 
 if __name__=='__main__':
-    n = input("Please enter your equation:")
-    ans = ''
-    cc = 0
-    for i in n:
-        if i=='^':
-            cc = 1
-            ans+=i
-        elif i!=' ':
-            ans+=i
-    if cc == 0:
-        linear_quation(ans)
-    else:
-        quadratic_equation(ans)
+            n = input('Please enter your equatin here:')
+            ans = ''
+            cc = 0
+            for i in n:
+                if i=='^':
+                    cc = 1
+                    ans+=i
+                elif i!=' ':
+                    ans+=i
+            if cc == 0:
+                linear_quation(ans)
+            else:
+                quadratic_equation(ans)
+
+'''Here are 10 linear equations and their corresponding roots:
+
+Equation: 2x + 4 = 0
+Root: (-2,)
+
+Equation: -3x - 6 = 0
+Root: (-2,)
+
+Equation: 5x - 15 = 0
+Root: (3,)
+
+Equation: x + 2 = 0
+Root: (-2,)
+
+Equation: 4x - 8 = 0
+Root: (2,)
+
+Equation: 2x - 4 = 0
+Root: (2,)
+
+Equation: -6x + 36 = 0
+Root: (6,)
+
+Equation: 3x + 9 = 0
+Root: (-3,)
+
+Equation: 2x - 10 = 0
+Root: (5,)
+
+Equation: -4x - 8 = 0
+Root: (-2,)'''
