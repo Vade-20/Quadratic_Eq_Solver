@@ -282,7 +282,7 @@ def check_roots(a,b,c):
             return f'{is_perfect_square(D)}'
 
 if __name__=='__main__':
-            n = input('Please enter your equatin here:')
+            n = input('Please enter your equation here:')
             ans = ''
             cc = 0
             for i in n:
@@ -296,34 +296,3 @@ if __name__=='__main__':
             else:
                 quadratic_equation(ans)
 
-'''Here are 10 linear equations and their corresponding roots:
-
-Equation: 2x + 4 = 0
-Root: (-2,)
-
-Equation: -3x - 6 = 0
-Root: (-2,)
-
-Equation: 5x - 15 = 0
-Root: (3,)
-
-Equation: x + 2 = 0
-Root: (-2,)
-
-Equation: 4x - 8 = 0
-Root: (2,)
-
-Equation: 2x - 4 = 0
-Root: (2,)
-
-Equation: -6x + 36 = 0
-Root: (6,)
-
-Equation: 3x + 9 = 0
-Root: (-3,)
-
-Equation: 2x - 10 = 0
-Root: (5,)
-
-Equation: -4x - 8 = 0
-Root: (-2,)'''
