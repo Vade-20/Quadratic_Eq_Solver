@@ -111,23 +111,23 @@ def simple_fraction_with_roots(b,d,a,sign):
     if b!=0:
         if "i" in d:
             if a!=1:
-                return f'{-b}{sign}{d1[0]}√{d1[1]}i/{a}'
+                return f'({-b}{sign}{d1[0]}√{d1[1]}i)/{a}'
             else:
                 return f'{-b}{sign}{d1[0]}√{d1[1]}i'
         else:
             if a!=1:
-                return f'{-b}{sign}{d1[0]}√{d1[1]}/{a}'
+                return f'({-b}{sign}{d1[0]}√{d1[1]})/{a}'
             else:
                 return f'{-b}{sign}{d1[0]}√{d1[1]}'                         
     else:  
         if "i" in d:
             if a!=1:
-                return f'{sign}{d1[0]}√{d1[1]}i/{a}'
+                return f'({sign}{d1[0]}√{d1[1]}i)/{a}'
             else:
                 return f'{sign}{d1[0]}√{d1[1]}i'
         else:
             if a!=1:
-                return f'{sign}{d1[0]}√{d1[1]}/{a}'
+                return f'({sign}{d1[0]}√{d1[1]})/{a}'
             else:
                 return f'{sign}{d1[0]}√{d1[1]}'
 
@@ -160,14 +160,14 @@ def simple_fraction_with_roots_2(b,d,a,sign):
         d1 = ''
     if b!=0:
         if a!=1:
-            return f'{-b}{sign}{d1}i/{a}'                        
+            return f'({-b}{sign}{d1}i)/{a}'                        
         else:
             return f'{-b}{sign}{d1}i'                        
     else:  
         if a==1:
             return f'{sign}{d}i'
         else:
-            return f'{sign}{d}/{a}'                    
+            return f'({sign}{d})/{a}'                    
 
 
 def find_variable(n):
