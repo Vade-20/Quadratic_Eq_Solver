@@ -282,7 +282,7 @@ def check_roots(a,b,c):
             return f'{is_perfect_square(D)}'
 
 if __name__=='__main__':
-            n = input('Please enter your equation here:')
+            n = input("Please enter you equation :")
             ans = ''
             cc = 0
             for i in n:
